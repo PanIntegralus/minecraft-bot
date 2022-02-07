@@ -19,6 +19,7 @@
   "dependencies": {
     "cleverbot-free": "^1.1.7",
     "dotenv": "^16.0.0",
-    "mineflayer": "^3.18.0"
+    "mineflayer": "^3.18.0",
+    "mineflayer-pathfinder": "^1.9.1"
   }
 }
