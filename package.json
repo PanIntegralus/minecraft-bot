@@ -1,0 +1,24 @@
+{
+  "name": "minecraft-bot",
+  "version": "1.0.0",
+  "description": "Simple Mineflayer bot. Made for learning.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PanIntegralus/minecraft-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PanIntegralus/minecraft-bot/issues"
+  },
+  "homepage": "https://github.com/PanIntegralus/minecraft-bot#readme",
+  "dependencies": {
+    "cleverbot-free": "^1.1.7",
+    "dotenv": "^16.0.0",
+    "mineflayer": "^3.18.0"
+  }
+}
