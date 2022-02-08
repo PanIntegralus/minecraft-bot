@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/PanIntegralus/minecraft-bot#readme",
   "dependencies": {
+    "ansi-color": "^0.2.1",
     "cleverbot-free": "^1.1.7",
     "dotenv": "^16.0.0",
     "mineflayer": "^3.18.0",
-    "mineflayer-pathfinder": "^1.9.1"
+    "mineflayer-pathfinder": "^1.9.1",
+    "readline": "^1.3.0"
   }
 }

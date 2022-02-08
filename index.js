@@ -1,5 +1,34 @@
 const cleverbot = require("cleverbot-free");
 
+util = require('util'),
+color = require("ansi-color").set;
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+let rl = readline.createInterface(process.stdin, process.stdout)
+
+function console_out(msg) {
+    process.stdout.clearLine()
+    process.stdout.cursorTo(0)
+    console.log(msg)
+    rl.prompt(true)
+}
+
+rl.on('line', function (line) {
+    if (line[0] == "/" && line.length > 1) {
+        var cmd = line.match(/[a-z]+\b/)[0];
+        var arg = line.substr(cmd.length+2, line.length)
+        chat_command(cmd, arg)
+ 
+    } else {
+        // send chat message
+        socket.emit('send', { type: 'chat', message: line, nick: nick })
+        rl.prompt(true)
+    }
+});
+
 const mineflayer = require('mineflayer')
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder')
 
@@ -21,6 +50,8 @@ const appendContext = async(path, content) => {
         console.error(error)
     }
 }
+
+
 
 require('dotenv').config()
 
