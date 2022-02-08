@@ -25,14 +25,39 @@ const appendContext = async(path, content) => {
 require('dotenv').config()
 
 
-const bot = mineflayer.createBot({
+let options = {
     username: process.env.USERNAME,
     // password: process.env.PASSWORD,
-    host: 'localhost',
-    port: '45743',
+    host: 'serverk.my.pebble.host',
+    port: false,
     version: '1.18.1',
     auth: 'microsoft'
-})
+}
+
+let bot = mineflayer.createBot(options)
+bindEvents(bot)
+
+function bindEvents(bot) {
+
+    bot.on('error', function(err) {
+        console.log("Bot has encountered an error")
+    })
+
+    bot.on('end', function() {
+        console.log("Bot has ended")
+        setTimeout(relog, 10000)
+    })
+
+    function relog() {
+        console.log("Attempting to reconnect...")
+        bot = mineflayer.createBot(options)
+        bindEvents(bot)
+    }
+
+    bot.on('login', function() {
+        console.log("Bot connected")
+    })
+}
 
 bot.loadPlugin(pathfinder)
 const RANGE_GOAL = 1
@@ -50,7 +75,7 @@ const getResponse = async(author, inputmsg) => {
         if (fs.existsSync(__dirname+contextfolder+author)) {} else {writeContext(contextfolder+author, "")}
         const contextvalue = fs.readFileSync(__dirname+contextfolder+author)
         await cleverbot(inputmsg, contextvalue).then((response) => {
-            appendContext(contextfolder+author, response)
+            // appendContext(contextfolder+author, response)
             console.log(response)
             bot.chat(response)
         })
@@ -63,6 +88,7 @@ const getResponse = async(author, inputmsg) => {
 bot.on('chat', (username, message) => {
     if (username !== bot.username) {
         if (message.startsWith('!')) {
+            appendContext(contextfolder+username, message)
             getResponse(username, message)
         }
         if (message == prefix+'help') {
