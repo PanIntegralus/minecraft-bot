@@ -2,18 +2,25 @@ const cleverbot = require("cleverbot-free");
 
 util = require('util'),
 color = require("ansi-color").set;
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+const readline = require('readline')
 
 let rl = readline.createInterface(process.stdin, process.stdout)
 
-function console_out(msg) {
-    process.stdout.clearLine()
-    process.stdout.cursorTo(0)
-    console.log(msg)
-    rl.prompt(true)
+function chat_command(cmd, arg) {
+    switch (cmd) {
+ 
+        case 'quit':
+            bot.quit()
+            break
+        
+        case 'help':
+            console.log('Available commands: quit, help')
+            break
+ 
+        default:
+            console.log("That is not a valid command.")
+ 
+    }
 }
 
 rl.on('line', function (line) {
@@ -22,12 +29,8 @@ rl.on('line', function (line) {
         var arg = line.substr(cmd.length+2, line.length)
         chat_command(cmd, arg)
  
-    } else {
-        // send chat message
-        socket.emit('send', { type: 'chat', message: line, nick: nick })
-        rl.prompt(true)
     }
-});
+})
 
 const mineflayer = require('mineflayer')
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder')
