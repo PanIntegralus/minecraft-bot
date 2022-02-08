@@ -3,14 +3,33 @@ const cleverbot = require("cleverbot-free");
 const mineflayer = require('mineflayer')
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder')
 
+const fs = require('fs')
+const contextfolder = '/context/'
+
+const writeContext = async(path, content) => {
+    try {
+        fs.writeFileSync(__dirname+path, content)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+const appendContext = async(path, content) => {
+    try {
+        fs.appendFileSync(__dirname+path, content)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 require('dotenv').config()
 
 
 const bot = mineflayer.createBot({
     username: process.env.USERNAME,
     // password: process.env.PASSWORD,
-    host: 'pruebaslol.ploudos.me',
-    port: '',
+    host: 'localhost',
+    port: '45743',
     version: '1.18.1',
     auth: 'microsoft'
 })
@@ -26,17 +45,25 @@ const RANGE_GOAL = 1
 
 var prefix = 'bmp.'
 
-const getResponse = async(input) => {
-    await cleverbot(input).then((response) => {
-        console.log(response)
-        bot.chat(response)
-    })
+const getResponse = async(author, inputmsg) => {
+    try {
+        if (fs.existsSync(__dirname+contextfolder+author)) {} else {writeContext(contextfolder+author, "")}
+        const contextvalue = fs.readFileSync(__dirname+contextfolder+author)
+        await cleverbot(inputmsg, contextvalue).then((response) => {
+            appendContext(contextfolder+author, response)
+            console.log(response)
+            bot.chat(response)
+        })
+    } catch (error) {
+        console.error(error)
+        bot.chat("Estoy saturada "+author+", pregúntame de nuevo más tarde.")
+    }
 }
 
 bot.on('chat', (username, message) => {
     if (username !== bot.username) {
         if (message.startsWith('!')) {
-            getResponse(message)
+            getResponse(username, message)
         }
         if (message == prefix+'help') {
             bot.chat('Comandos: mine, come, stop, go')
