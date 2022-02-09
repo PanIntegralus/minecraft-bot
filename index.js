@@ -54,18 +54,16 @@ const appendContext = async(path, content) => {
     }
 }
 
-
-
 require('dotenv').config()
 
+const nconf = require('nconf')
+nconf.file('config.json')
 
 let options = {
-    username: process.env.USERNAME,
-    // password: process.env.PASSWORD,
-    host: 'serverk.my.pebble.host',
-    port: false,
-    version: '1.18.1',
-    auth: 'microsoft'
+    host: nconf.get('server:host'),
+    port: nconf.get('server:port'),
+    version: nconf.get('server:version'),
+    auth: nconf.get('account:auth')
 }
 
 let bot = mineflayer.createBot(options)
