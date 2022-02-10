@@ -7,33 +7,25 @@ const readline = require('readline')
 let rl = readline.createInterface(process.stdin, process.stdout)
 
 function chat_command(cmd, arg) {
-    switch (cmd) {
- 
-        case 'quit':
-            bot.quit()
-            break
-        
-        case 'help':
-            console.log('Available commands: quit, help')
-            break
- 
-        default:
-            console.log("That is not a valid command.")
- 
+    if (arg) {
+        bot.chat("/"+cmd+arg)
+    } else { bot.chat("/"+cmd) }
+    if (cmd.startsWith("!")) {
+        bot.chat(cmd.substring(1))
     }
 }
 
 rl.on('line', function (line) {
-    if (line[0] == "/" && line.length > 1) {
         var cmd = line.match(/[a-z]+\b/)[0];
         var arg = line.substr(cmd.length+2, line.length)
         chat_command(cmd, arg)
- 
-    }
 })
 
+// require del modulo del bot y los plugins
 const mineflayer = require('mineflayer')
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder')
+const AutoAuth = require('mineflayer-auto-auth')
+const mineflayerViewer = require('prismarine-viewer').mineflayer
 
 const fs = require('fs')
 const contextfolder = '/context/'
@@ -63,7 +55,14 @@ let options = {
     host: nconf.get('server:host'),
     port: nconf.get('server:port'),
     version: nconf.get('server:version'),
-    auth: nconf.get('account:auth')
+    auth: nconf.get('account:auth'),
+
+    plugins: [AutoAuth],
+    AutoAuth: {
+        logging: true,
+        password: 'salchichaGamer123',
+        ignoreRepeat: false
+      }
 }
 
 let bot = mineflayer.createBot(options)
@@ -75,8 +74,8 @@ function bindEvents(bot) {
         console.log("Bot has encountered an error")
     })
 
-    bot.on('end', function() {
-        console.log("Bot has ended")
+    bot.on('end', (reason) => {
+        console.log("Bot has ended ("+reason+")")
         setTimeout(relog, 10000)
     })
 
@@ -93,12 +92,6 @@ function bindEvents(bot) {
 
 bot.loadPlugin(pathfinder)
 const RANGE_GOAL = 1
-
-// const welcome = () => {
-//     bot.chat('hola buenos dia')
-// }
-
-// bot.once('spawn', welcome)
 
 var prefix = 'bmp.'
 
@@ -118,6 +111,7 @@ const getResponse = async(author, inputmsg) => {
 }
 
 bot.on('chat', (username, message) => {
+    console.log(message)
     if (username !== bot.username) {
         if (message.startsWith('!')) {
             appendContext(contextfolder+username, message)
@@ -144,8 +138,17 @@ bot.on('chat', (username, message) => {
     }
 })
 
+bot.on("message", function(message) { console.log(message.toString()) })
+
 bot.on('goal_reached', function() {
     bot.chat("Ya he llegao")
+})
+
+bot.once('spawn', function() {
+    mineflayerViewer(bot, {
+        viewDistance: 10,
+        port: 3000,
+    })
 })
 
 bot.once('death', function() {})
